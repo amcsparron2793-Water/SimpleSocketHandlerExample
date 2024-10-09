@@ -17,3 +17,18 @@ This setup will allow you to send
 and receive log messages over a network using sockets. Make sure to have both the client and server running
 simultaneously to see the log messages being transmitted and received."""
 
+import subprocess
+
+
+def run_example():
+    s_handler_process = subprocess.Popen(["python", "SocketHandler.py"])
+    log_receiver_process = subprocess.Popen(["python", "LogReceiver.py"])
+    s_handler_process.wait()
+    log_receiver_process.wait()
+
+
+if __name__ == '__main__':
+    run_example()
+
+
+
