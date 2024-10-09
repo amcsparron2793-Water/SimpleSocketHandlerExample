@@ -4,7 +4,25 @@ import socket
 import pickle
 import struct
 
+
 class SimpleSocketHandler(logging.Handler):
+    """
+    SimpleSocketHandler class that extends logging.Handler class.
+    Used for sending log messages over a socket connection to a server.
+    Requires a host and port as parameters during initialization.
+
+    Methods:
+    - __init__(self, host, port):
+            Initializes the SimpleSocketHandler with the specified host and port. Establishes a socket connection.
+    - _setup_and_test(self):
+            Sets up the logger and tests the log messages by sending a test message and an error message to the server.
+    - emit(self, record):
+            Sends the log record data over the socket connection.
+    - makePickle(self, record):
+            Serializes the log record data using pickle.
+    - close(self):
+            Closes the socket connection and the logging handler.
+    """
     def __init__(self, host, port):
         logging.Handler.__init__(self)
         self.host = host
