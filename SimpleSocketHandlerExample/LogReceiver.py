@@ -2,6 +2,7 @@ import socket
 import struct
 import pickle
 import logging
+from time import sleep
 
 
 class LogReceiver:
@@ -24,17 +25,7 @@ class LogReceiver:
         self.sock.bind((self.host, self.port))
         self.sock.listen(1)
 
-    def start(self):
-        """
-        Handles incoming log records over a socket connection.
-
-        Accepts incoming connections and processes log records
-        until a keyboard interrupt occurs or an exception is raised.
-
-        Logs any errors that occur during the process.
-        """
-        connection, address = self.sock.accept()
-        print(f'Connected by {address}')
+    def receive_log_record(self, connection):
         while True:
             try:
                 length_data = connection.recv(4)
@@ -50,12 +41,39 @@ class LogReceiver:
                 print(f'Error: {e}')
                 break
 
+    def start(self):
+        """
+        Handles incoming log records over a socket connection.
+
+        Accepts incoming connections and processes log records
+        until a keyboard interrupt occurs or an exception is raised.
+
+        Logs any errors that occur during the process.
+        """
+
+        while True:
+            try:
+                print('waiting for connection...')
+                connection, address = self.sock.accept()
+                print(f'{address} making connection...')
+                sleep(0.5)
+
+                self.receive_log_record(connection)
+            except KeyboardInterrupt:
+                break
+            except Exception as e:
+                print(f'Error: {e}')
+                break
+            sleep(0.5)
+            print('closing connection...')
+
     def handle_log_record(self, record):
         """
         Handles a log record by retrieving a logger instance based on the record's name
         and then passing the record to the logger's handle method.
         """
         logger = logging.getLogger(record.name)
+        logger.setLevel(logging.DEBUG)
         logger.handle(record)
 
 
